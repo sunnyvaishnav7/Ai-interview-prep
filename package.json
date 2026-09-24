@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm --prefix Frontend run dev\"",
+    "dev:frontend": "npm --prefix Frontend run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,7 +14,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^3.0.3",
+    "concurrently": "^9.2.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^18.0.3",
     "express": "^5.2.1",
@@ -20,6 +24,7 @@
     "mongoose": "^9.10.2",
     "multer": "^2.4.0",
     "nodemon": "^3.1.14",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.20.2"
   }
 }

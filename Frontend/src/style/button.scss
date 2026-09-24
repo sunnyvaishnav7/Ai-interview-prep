@@ -1,0 +1,115 @@
+@use "./tokens.scss" as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--duration-normal) var(--ease-standard);
+  user-select: none;
+  white-space: nowrap;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-bg-base), 0 0 0 4px var(--orange-500);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  // Primary Orange Button
+  &-primary {
+    background: linear-gradient(135deg, var(--orange-500) 0%, var(--orange-600) 100%);
+    color: var(--color-white-100);
+    box-shadow: 0 4px 16px rgba(255, 122, 26, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #ff8c38 0%, var(--orange-500) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(255, 122, 26, 0.5), 0 0 12px rgba(255, 122, 26, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+      background: var(--orange-700);
+      box-shadow: 0 2px 8px rgba(255, 122, 26, 0.3);
+    }
+  }
+
+  // Secondary Glass / Outlined Button
+  &-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-white-80);
+    border: 1px solid var(--color-border-glass);
+    backdrop-filter: blur(12px);
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--color-border-glow);
+      color: var(--color-white-100);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(255, 122, 26, 0.15);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  // Ghost Button
+  &-ghost {
+    background: transparent;
+    color: var(--color-white-50);
+    border: 1px solid transparent;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--color-white-100);
+    }
+  }
+
+  // Large CTA Button with Pulsing Spark
+  &-cta {
+    width: 100%;
+    padding: 16px 28px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--orange-500) 0%, var(--orange-600) 100%);
+    color: var(--color-white-100);
+    box-shadow: 0 6px 28px rgba(255, 122, 26, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    position: relative;
+    overflow: hidden;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(255, 122, 26, 0.6), 0 0 20px rgba(255, 122, 26, 0.45);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: var(--orange-700);
+    }
+  }
+}
+
+// Backward-compatibility aliases
+.button.primary-button {
+  @extend .btn;
+  @extend .btn-primary;
+}

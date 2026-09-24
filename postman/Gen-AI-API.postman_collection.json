@@ -1,0 +1,277 @@
+{
+    "info": {
+        "name": "Gen AI Interview API",
+        "description": "Requests and tests for the Gen AI Interview API. Run Register, Login, Get Me, then the interview requests in order.",
+        "schema": "https://schema.postman.com/json/collection/v2.1.0/collection.json"
+    },
+    "event": [
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "pm.test('Response time is under 5 seconds', function () {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                    "});"
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000"
+        },
+        {
+            "key": "reportId",
+            "value": ""
+        }
+    ],
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"postman_user_{{$timestamp}}\",\n  \"email\": \"postman_{{$timestamp}}@example.com\",\n  \"password\": \"Password123!\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{baseUrl}}/api/auth/register"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Register returns 201', function () {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "pm.test('Register returns a user', function () {",
+                                    "    pm.expect(pm.response.json().user).to.be.an('object');",
+                                    "});",
+                                    "const requestData = JSON.parse(pm.request.body.raw);",
+                                    "pm.collectionVariables.set('email', requestData.email);",
+                                    "pm.collectionVariables.set('password', requestData.password);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{baseUrl}}/api/auth/login"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Login returns 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test('Login returns a user', function () {",
+                                    "    pm.expect(pm.response.json().user).to.be.an('object');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/auth/get-me"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Get current user returns 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test('Current user has an email', function () {",
+                                    "    pm.expect(pm.response.json().user.email).to.be.a('string');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Interview",
+            "item": [
+                {
+                    "name": "Generate Interview Report",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "resume",
+                                    "type": "file",
+                                    "src": "{{resumeFile}}"
+                                },
+                                {
+                                    "key": "selfDescription",
+                                    "value": "Backend developer with Node.js and MongoDB experience.",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "jobDescription",
+                                    "value": "Looking for a Node.js backend developer with REST API experience.",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": "{{baseUrl}}/api/interview/"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Report generation returns 201', function () {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "if (pm.response.code === 201) {",
+                                    "    pm.collectionVariables.set('reportId', pm.response.json().interviewReport._id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "List Interview Reports",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/interview/"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('List reports returns 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test('Reports is an array', function () {",
+                                    "    pm.expect(pm.response.json().interviewReports).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Interview Report",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/api/interview/report/{{reportId}}"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Get report returns 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test('Response contains an interview report', function () {",
+                                    "    pm.expect(pm.response.json().interviewReport).to.be.an('object');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Generate Resume PDF",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/api/interview/resume/pdf/{{reportId}}"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Resume generation returns 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test('Response is a PDF', function () {",
+                                    "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/pdf');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Logout (run last)",
+            "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/auth/logout"
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test('Logout returns 200', function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
